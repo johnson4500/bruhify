@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bruhify</title>
+    <script src = "app.js"></script>
+    <link rel = "stylesheet" href = "style.css">
+</head>
+
+<body onload = "onPageLoad()">
+    <div class="space" id = "marg">
+        <p id = "bruhify"><strong>Bruhify</strong></p>
+    </div>
+    <div class = "canvas-container" id = "canbruh">
+        <canvas id="myChart"></canvas>
+    </div>
+    <div class = "container">
+        <div id = "tokenSection">
+            <div class="inputContainer">
+                <input required="required" id="client_id" placeholder="Client ID" type="text" autocomplete="off">
+            </div>
+            <br><br>
+            <div class="inputContainer">
+                <input required="required" id="client_secret" placeholder="Client Secret" type="text" autocomplete="off">
+            </div>
+            <br><br>
+            <input class = "bruh" type="button" onClick ="requestAuthorization()" value = "Request Authorization">
+        </div>
+        <br><br><br>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script>
+    
+    function createChart() {
+    const data = {
+        labels: labels,
+        datasets:[{
+            data: artistData,
+            backgroundColor: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'white', 'cyan', 'brown']
+        }]  
+    };
+
+    const config = {
+        type: 'doughnut',
+        data: data,
+        maintainAspectRatio: false,
+        responsive: true,
+        options:{
+            plugins:{
+                legend:{
+                    display:true,
+                },
+                title: {
+                    display:true,
+                    text: 'joughnut',
+                    color: 'black',
+                    font:{
+                        size: 20,
+                        
+                    }  
+                },
+            },
+            cutout: '30%',
+            radius: '100%',
+        }
+    };
+
+    const chart = new Chart(
+        document.getElementById('myChart'),
+        config
+    )
+}
+    </script>
+</body>
+
+</html>
