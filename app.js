@@ -1,4 +1,4 @@
-var redirecturi = "https://johnson4500.github.io/"
+var redirecturi = "https://johnson4500.github.io/bruhify/"
 var clientid = "72232195509f438a9bb37a0a7f2dccf4"
 
 const TOKEN = "https://accounts.spotify.com/api/token"
