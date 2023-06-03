@@ -1,11 +1,11 @@
-var redirecturi = "http://127.0.0.1:5500/index.html"
-var clientid = "2aac6940e637472d8e2c41b0b8d7dcd6"
+var redirecturi = "https://johnson4500.github.io/"
+var clientid = "72232195509f438a9bb37a0a7f2dccf4"
 
 const TOKEN = "https://accounts.spotify.com/api/token"
 const AUTHORIZE = "https://accounts.spotify.com/authorize"
-const ARTISTS = "https://api.spotify.com/v1/me/top/artists?time_range=long_term&limit=10";
-const DEVICES = "https://api.spotify.com/v1/me/player/devices";
-const TRACKS = "https://api.spotify.com/v1/me/top/tracks";
+const ARTISTS = "https://api.spotify.com/v1/me/top/artists?time_range=long_term&limit=10"
+const DEVICES = "https://api.spotify.com/v1/me/player/devices"
+const TRACKS = "https://api.spotify.com/v1/me/top/tracks"
 
 
 function awesome(){
