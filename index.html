@@ -15,7 +15,7 @@
     </div>
     <input class = "bruh" id = "botton" type="button" onclick = "awesome()" value = "login with spotify">
     <div class = "canvas-container" id = "canbruh">
-        <canvas id="myChart"></canvas>
+        <canvas id="myChart" style = "min-height:250px"></canvas>
     </div>
    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
@@ -34,9 +34,10 @@
     const config = {
         type: 'doughnut',
         data: data,
-        maintainAspectRatio: false,
-        responsive: true,
+        
         options:{
+            responsive: true,
+            maintainAspectRatio: false,
             plugins:{
                 legend:{
                     display:true,
@@ -52,7 +53,7 @@
                 },
             },
             cutout: '30%',
-            radius: '95%',
+            radius: '96%',
         }
     };
 

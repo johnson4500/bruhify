@@ -32,50 +32,6 @@ body{
         flex-direction: column;
         gap: 10px;
       }
-      
-      #client_id {
-        border: 2px solid white;
-        background-color: transparent;
-        border-radius: 10px;
-        padding: 12px 15px;
-        color: black;
-        font-weight: 500;
-        outline: none;
-        transition-duration: .3s;
-        font-family: Helvetica, Arial, sans-serif;
-      }
-      
-      #client_id:focus,
-      #client_id:valid {
-        background-color: #ddd;
-        transition-duration: .3s;
-      }
-
-    .inputContainer2 {
-        position: relative;
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      
-      #client_secret {
-        border: 2px solid white;
-        background-color: transparent;
-        border-radius: 10px;
-        padding: 12px 15px;
-        color: black;
-        font-weight: 500;
-        outline: none;
-        transition-duration: .3s;
-        font-family: Helvetica, Arial, sans-serif;
-      }
-      
-      #client_secret:focus,
-      #client_secret:valid {
-        background-color: #ddd;
-        transition-duration: .3s;
-      }
     
 .secretBottLabel{
     display: flex;
@@ -109,7 +65,6 @@ body{
     background-color: #afeedb;
 }
 
-  
 .canvas-container {
     margin: 20px auto;
     width: 50%;
