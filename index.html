@@ -9,28 +9,15 @@
     <link rel = "stylesheet" href = "style.css">
 </head>
 
-<body onload = "onPageLoad()">
+<body onload = onPageLoad()> 
     <div class="space" id = "marg">
         <p id = "bruhify"><strong>Bruhify</strong></p>
     </div>
+    <input class = "bruh" id = "botton" type="button" onclick = "awesome()" value = "login with spotify">
     <div class = "canvas-container" id = "canbruh">
         <canvas id="myChart"></canvas>
     </div>
-    <div class = "container">
-        <div id = "tokenSection">
-            <div class="inputContainer">
-                <input required="required" id="client_id" placeholder="Client ID" type="text" autocomplete="off">
-            </div>
-            <br><br>
-            <div class="inputContainer">
-                <input required="required" id="client_secret" placeholder="Client Secret" type="text" autocomplete="off">
-            </div>
-            <br><br>
-            <input class = "bruh" type="button" onClick ="requestAuthorization()" value = "Request Authorization">
-        </div>
-        <br><br><br>
-    </div>
-
+   
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script>
@@ -65,7 +52,7 @@
                 },
             },
             cutout: '30%',
-            radius: '100%',
+            radius: '95%',
         }
     };
 

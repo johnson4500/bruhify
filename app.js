@@ -1,7 +1,5 @@
-var redirect_uri = "https://johnson4500.github.io/"
-var client_id = ""
-var client_secret = ""
-
+var redirecturi = "http://127.0.0.1:5500/index.html"
+var clientid = "2aac6940e637472d8e2c41b0b8d7dcd6"
 
 const TOKEN = "https://accounts.spotify.com/api/token"
 const AUTHORIZE = "https://accounts.spotify.com/authorize"
@@ -9,72 +7,107 @@ const ARTISTS = "https://api.spotify.com/v1/me/top/artists?time_range=long_term&
 const DEVICES = "https://api.spotify.com/v1/me/player/devices";
 const TRACKS = "https://api.spotify.com/v1/me/top/tracks";
 
-//If the querystring part of the URL is valid, handle redirects.
+
+function awesome(){
+let codeVerifier = generateRandomString(128);
+generateCodeChallenge(codeVerifier).then(codeChallenge => {
+  let state = generateRandomString(16);
+  let scope = "user-read-email user-modify-playback-state user-read-recently-played user-read-email user-top-read user-read-playback-state";;
+
+  localStorage.setItem('code_verifier', codeVerifier);
+
+  let args = new URLSearchParams({
+    response_type: 'code',
+    client_id: clientid,
+    scope: scope,
+    redirect_uri: redirecturi,
+    state: state,
+    code_challenge_method: 'S256',
+    code_challenge: codeChallenge
+  });
+  window.location = 'https://accounts.spotify.com/authorize?' + args;
+});
+}
+
 function onPageLoad(){
-    client_id = localStorage.getItem("client_id");
-    client_secret = localStorage.getItem("client_secret");
     if (window.location.search.length > 0){
         handleRedirect();
     } else {
         access_token = localStorage.getItem("access_token");
-        if (access_token == null){
-            // Display token section if no valid token
-            document.getElementById("tokenSection").style.display = 'block';  
-        }
-        else {
-            // Upon valid token, display the graph
-            let bruhify = "Your Top Artists";
+        if (access_token != null){
+            //Display elements once access token received
+            document.getElementById("botton").style.display = 'none';  
+            let bruhify = "your top artists";
             document.getElementById("canbruh").style.display = 'block';
             document.getElementById("bruhify").innerHTML = bruhify.bold(); 
             document.getElementById("marg").style.marginTop= "0px";
-    
             topArtists();
-            getTracks();
         }
     }
 }
 
-function handleRedirect(){
+function generateRandomString(length) {
+    let text = '';
+    let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  
+    for (let i = 0; i < length; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+  }
+
+  async function generateCodeChallenge(codeVerifier) {
+    function base64encode(string) {
+      return btoa(String.fromCharCode.apply(null, new Uint8Array(string)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+    }
+  
+    const encoder = new TextEncoder();
+    const data = encoder.encode(codeVerifier);
+    const digest = await window.crypto.subtle.digest('SHA-256', data);
+  
+    return base64encode(digest);
+  }
+
+  function handleRedirect(){
     let code = getCode();
-    fetchAccessToken(code);
-    // Remove the parameters from the URL to have a clean URL each refresh.
-    window.history.pushState("", "", redirect_uri);
+    requestAccessToken(code);
+    //Remove the parameters from the URL to have a clean URL each refresh.
+    window.history.pushState("", "", redirecturi);
 }
 
-/* When the authorization code is received, we must exchange it with an access token
-by making a POST request to the Spotify Accounts Service. */
-function fetchAccessToken(code){
-    let body = "grant_type=authorization_code";
-    body += "&code=" + code;
-    body += "&redirect_uri=" + encodeURI(redirect_uri);
-    body += "&client_id=" + client_id;
-    body += "&client_secret=" + client_secret;
-    callAuthorization(body);
-}
+  function getCode(){
+        let code = null;
+        const urlParams = new URLSearchParams(window.location.search);
+        code = urlParams.get('code');
+        return code;
+  }
 
-// The XMLHttpRequest object can be used to request data from a web server.
+    function requestAccessToken(code){
+        let codeVerifier = localStorage.getItem('code_verifier');
+        let body = "grant_type=authorization_code";
+            body += "&code=" + code;
+            body += "&redirect_uri=" + redirecturi;
+            body += "&client_id=" + clientid;
+            body += "&code_verifier=" + codeVerifier;
+            console.log(body);
+            callAuthorization(body);
+    };
+
+
 function callAuthorization(body){
-    let bossRequest = new XMLHttpRequest();
-    bossRequest.open("POST", TOKEN, true);
-    // Content-Type in header required set to application/x-www-form-urlencoded.
-    bossRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    /* The authorization requires a Base 64 encoded string containing the client ID and 
-    client secret key, hence the btoa method. Authorization: Basic <base64 encoded client_id:client_secret>*/
-    bossRequest.setRequestHeader('Authorization', 'Basic ' + btoa(client_id + ":" + client_secret));
-    //Send request to server.
-    bossRequest.send(body);
-    bossRequest.onload = authorizationResponseHandler;
-}
+        let bossRequest = new XMLHttpRequest();
+        bossRequest.open("POST", TOKEN, true);
+        // Content-Type in header required set to application/x-www-form-urlencoded.
+        bossRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        //Send request to server.
+        bossRequest.send(body);
+        bossRequest.onload = authorizationResponseHandler;
+    }
 
-function refreshAccessToken(){
-    refresh_token = localStorage.getItem("refresh_token");
-    let body = "grant_type=refresh_token";
-    body += "&refresh_token=" + refresh_token;
-    body += "&client_id=" + client_id;
-    callAuthorization(body);
-}
-
-// 200,	OK - The request has succeeded. The client can read the result of the request in the body and the headers of the response.//
+    // 200,	OK - The request has succeeded. The client can read the result of the request in the body and the headers of the response.//
 function authorizationResponseHandler(){
     if (this.status == 200){
         var data = JSON.parse(this.responseText);
@@ -94,57 +127,21 @@ function authorizationResponseHandler(){
         console.log(this.responseText);
         alert(this.responseText);
     }
+    console.log(this.status);
 }
 
-
-// After authorization, a unique code is returned in the query string of our URL. 
-function getCode(){
-    let code = null;
-    const query = window.location.search;
-    if (query.length > 0){
-        // URLSearchParams method allows us to get the code within the query string.
-        const urlParameters = new URLSearchParams(query);
-        //Search for code parameter within query string.
-        code = urlParameters.get('code');
-    }
-    return code;
+function refreshAccessToken(){
+    refresh_token = localStorage.getItem("refresh_token");
+    let body = "grant_type=refresh_token";
+    body += "&refresh_token=" + refresh_token;
+    body += "&client_id=" + client_id;
+    callAuthorization(body);
 }
 
-function requestAuthorization(){
-    //Store client ID and secret ID in the respective variables.
-    client_id = document.getElementById("client_id").value;
-    client_secret = document.getElementById("client_secret").value;
-    localStorage.setItem("client_id", client_id);
-    localStorage.setItem("client_secret", client_secret);
-
-    //The url variable will be concatenated with these IDs.
-    let url = AUTHORIZE;
-    url += "?client_id=" + client_id;
-    url += "&response_type=code";
-    url += "&redirect_uri=" + encodeURI(redirect_uri);
-    url += "&show_dialog=true";
-    url += "&scope=user-read-email user-modify-playback-state user-read-recently-played user-read-email user-top-read user-read-playback-state";
-
-    //Redirect user to the Spotify authorization page with the completed URL.
-    window.location.href = url;
+function topArtists(){
+    url = ARTISTS;
+    callApi("GET", ARTISTS, null, handleArtistsResponse);
 }
-
-
-
-function handleDevicesResponse(){
-    if ( this.status == 200 ){
-        var data = JSON.parse(this.responseText);
-        console.log(data);
-    }
-    else if ( this.status == 401 ){
-       refreshAccessToken()
-    }
-    else {
-        console.log(this.responseText);
-        alert(this.responseText);
-    }
-}
-
 
 function callApi(method, url, body, callback){
     let xBoss = new XMLHttpRequest();
@@ -153,13 +150,6 @@ function callApi(method, url, body, callback){
     xBoss.setRequestHeader('Authorization', 'Bearer ' + access_token);
     xBoss.send(body);
     xBoss.onload = callback;
-}
-
-
-
-function topArtists(){
-    url = ARTISTS;
-    callApi("GET", ARTISTS, null, handleArtistsResponse);
 }
 
 let labels = [];
@@ -185,23 +175,22 @@ function addArtist(item, index){
     artistData.push(item.popularity);
 }
 
-function getTracks(){
-    url = TRACKS;
-    callApi("GET", TRACKS, null, handleTracksResponse)
-}
+// function getTracks(){
+//     url = TRACKS;
+//     callApi("GET", TRACKS, null, handleTracksResponse)
+// }
 
-function handleTracksResponse(){
-    if (this.status == 200){
-        var data = JSON.parse(this.responseText);
-        console.log(data);
-    }
-    else if (this.status == 401){
-       refreshAccessToken()
+// function handleTracksResponse(){
+//     if (this.status == 200){
+//         var data = JSON.parse(this.responseText);
+//         console.log(data);
+//     }
+//     else if (this.status == 401){
+//        refreshAccessToken()
        
-    }
-    else {
-        console.log(this.responseText);
-        alert(this.responseText);
-    }
-}
-
+//     }
+//     else {
+//         console.log(this.responseText);
+//         alert(this.responseText);
+//     }
+// }

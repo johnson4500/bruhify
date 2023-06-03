@@ -85,7 +85,8 @@ body{
     font-size: 25px;
 }
 
-.bruh{
+#botton{
+    display: none;
     text-align: center;  
     font-size: 22px;
     font-weight: 500;
@@ -104,7 +105,7 @@ body{
 
 }
 
-.bruh:hover{
+#botton:hover{
     background-color: #afeedb;
 }
 
@@ -117,4 +118,4 @@ body{
   
   .myChart {
     display:none;
-  }}
+  }
