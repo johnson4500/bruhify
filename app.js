@@ -1,4 +1,4 @@
-var redirect_uri = "https://johnson4500.github.io"
+var redirect_uri = "https://johnson4500.github.io/"
 var client_id = ""
 var client_secret = ""
 
