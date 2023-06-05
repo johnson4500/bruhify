@@ -39,8 +39,10 @@ function onPageLoad(){
             document.getElementById("botton").style.display = 'none';  
             let bruhify = "your top artists";
             document.getElementById("canbruh").style.display = 'block';
+            document.getElementById("artists").style.display = 'inline-block';
             document.getElementById("bruhify").innerHTML = bruhify.bold(); 
             document.getElementById("marg").style.marginTop= "0px";
+    
             topArtists();
         }
     }
@@ -134,7 +136,7 @@ function refreshAccessToken(){
     refresh_token = localStorage.getItem("refresh_token");
     let body = "grant_type=refresh_token";
     body += "&refresh_token=" + refresh_token;
-    body += "&client_id=" + client_id;
+    body += "&client_id=" + clientid;
     callAuthorization(body);
 }
 
@@ -153,27 +155,178 @@ function callApi(method, url, body, callback){
 }
 
 let labels = [];
-let artistData = [];
+let artistName = [];
 function handleArtistsResponse(){
-        if (this.status == 200){
-            var data = JSON.parse(this.responseText);
-            console.log(data);
-            data.items.forEach((item, index) => addArtist(item, index));
-            createChart();
+    if (this.status == 200){
+        var data = JSON.parse(this.responseText);
+        console.log(data);
+        data.items.forEach((item, index) => addArtist(item, index));
+        genreFrequency(labels);
+        createChart();
+    }
+    else if (this.status == 401){
+       refreshAccessToken()
         }
-        else if (this.status == 401){
-           refreshAccessToken()
-        }
-        else {
-            console.log(this.responseText);
-            alert(this.responseText);
-        }
+    else {
+        console.log(this.responseText);
+        alert(this.responseText);
+    }
+
+    function createChart() {
+        const data = {
+            labels: topGenres,
+            datasets:[{
+                label:'bruh',
+                data: topRatios || [],
+                backgroundColor: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'white', 'cyan', 'brown']
+            }]  
+        };
+                
+        const config = {
+            type: 'doughnut',
+            data: data,    
+            options:{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins:{
+                    legend:{
+                        display:true,
+                        },
+                    title: {
+                        display:true,
+                        text: 'ur top genres joughnut',
+                        color: 'black',
+                        font:{
+                            size: 20,
+                        }  
+                        },
+                    tooltip: {
+                        callbacks: {
+                            label: ((tooltipItem, ) => {   
+                                let label = tooltipItem.label;
+                                let index = tooltipItem.dataset.data[tooltipItem.dataIndex];
+                                return label + ": " + index + "%";
+                            })
+                        }
+                    },
+                        cutout: '30%',
+                        radius: '96%',
+                    }
+                }
+            };
+
+    const chartData = {
+        type: 'doughnut',
+        data: data,
+        options: config.options,
+        };
+            
+    const chart = new Chart(
+        document.getElementById('myChart'),
+        chartData
+        );
+    }
 }
 
+
+
 function addArtist(item, index){
-    labels.push(item.name);
-    artistData.push(item.popularity);
+    labels.push(item.genres);
+    artistName.push(item.name);
+
+    const newPara = document.createElement("span");
+    newPara.setAttribute("id", item.name);
+
+    const newContent = document.createTextNode(item.name.toLowerCase());
+    newPara.appendChild(newContent);
+
+    const br = document.createElement("br"); // Add a line break element
+
+    const element = document.getElementById("artists");
+    element.append(newPara);
+    
+    const spans = element.getElementsByTagName("span");
+    for (let i = 0; i < spans.length; i++) {
+        spans[i].style.display = "block"; // Set the display property to block
+        spans[i].style.marginBottom = "10px"; // Adjust the margin size as needed
+    }
+
+    var clickableText = document.getElementById(item.name);
+
+    // Resize the infoBox text dynamically
+    function resizeInfoBox() {
+        const infoBox = document.getElementById("infoBox");
+        const maxWidth = infoBox.clientWidth;
+        const maxHeight = infoBox.clientHeight;
+      
+        let fontSize = 16; // Initial font size
+        let contentFits = false;
+      
+        while (!contentFits && fontSize > 0) {
+          infoBox.style.fontSize = fontSize + "px";
+      
+          if (infoBox.scrollWidth <= maxWidth && infoBox.scrollHeight <= maxHeight) {
+            contentFits = true;
+          } else {
+            fontSize--;
+          }
+        }
+      }
+
+    // Adjust the infoBox position when the window is resized
+    window.addEventListener("resize", function() {
+    const infoBoxContainer = document.getElementById("infoBoxContainer");
+    infoBoxContainer.style.right = "25%"; // Adjust as needed
+    });
+
+    clickableText.addEventListener("mouseover", function() {
+        clickableText.style.color = "red"; // Change text color on hover
+        const infoBox = document.getElementById("infoBox");
+        infoBox.innerHTML = item.name.toLowerCase() + "<br><br>genres: " + String(item.genres).replace(/,/g, ", ");
+        infoBox.style.opacity = "1";
+        resizeInfoBox();
+    });
+
+    clickableText.addEventListener("mouseout", function() {
+        clickableText.style.color = ""; // Reset text color when mouse moves out
+        infoBox.style.opacity = "0";
+    });
 }
+
+let genrePopularity = {};
+let topGenres = [];
+let topRatios = [];
+function genreFrequency(array){
+    for (let i = 0; i < array.length; i++) {
+        let row = array[i];
+        
+        // Iterate through each genre in the row
+        for (let j = 0; j < row.length; j++) {
+          let genre = row[j];
+          
+          // Check if the genre is already in the object
+          if (genrePopularity.hasOwnProperty(genre)) {
+            // If it is, increment the count by 1
+            genrePopularity[genre] += 1;
+          } else {
+            // If it's not, add it to the object with a count of 1
+            genrePopularity[genre] = 1;
+          }
+        }
+      }
+    
+      // Sort genres by their ratios in descending order
+      let sortedGenres = Object.keys(genrePopularity).sort((a, b) => genrePopularity[b] - genrePopularity[a]);
+    
+      // Extract the top ten genres and their ratios
+      topGenres = sortedGenres.slice(0, 10);
+      let totalCount = sortedGenres.slice(0, 10).reduce((sum, genre) => sum + genrePopularity[genre], 0);
+      topRatios = topGenres.map(genre => Math.round((genrePopularity[genre] / totalCount) * 100));
+    
+      return [topGenres, topRatios];
+}
+
+
 
 // function getTracks(){
 //     url = TRACKS;

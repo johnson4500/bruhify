@@ -12,7 +12,12 @@
 <body onload = onPageLoad()> 
     <div class="space" id = "marg">
         <p id = "bruhify"><strong>Bruhify</strong></p>
+        <p id = "artists"></p>
     </div>
+    <div id = "infoBoxContainer">
+        <div id="infoBox"></div>
+    </div>
+
     <input class = "bruh" id = "botton" type="button" onclick = "awesome()" value = "login with spotify">
     <div class = "canvas-container" id = "canbruh">
         <canvas id="myChart" style = "min-height:250px"></canvas>
@@ -20,49 +25,7 @@
    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-    <script>
-    
-    function createChart() {
-    const data = {
-        labels: labels,
-        datasets:[{
-            data: artistData,
-            backgroundColor: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'white', 'cyan', 'brown']
-        }]  
-    };
 
-    const config = {
-        type: 'doughnut',
-        data: data,
-        
-        options:{
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins:{
-                legend:{
-                    display:true,
-                },
-                title: {
-                    display:true,
-                    text: 'joughnut',
-                    color: 'black',
-                    font:{
-                        size: 20,
-                        
-                    }  
-                },
-            },
-            cutout: '30%',
-            radius: '96%',
-        }
-    };
-
-    const chart = new Chart(
-        document.getElementById('myChart'),
-        config
-    )
-}
-    </script>
 </body>
 
 </html>
